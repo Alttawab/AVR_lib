@@ -23,4 +23,5 @@ C_DEPS :=
 SUBDIRS := \
 HAL \
 MCAL \
+. \
 
