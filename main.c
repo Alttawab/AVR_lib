@@ -10,7 +10,7 @@
 #include "HAL/SevenSegments.h"
 #include <util\delay.h>
 #include <avr/io.h>
-
+#define DELAY 5
 int main()
 {
 	void_sevSeg_init() ;
@@ -20,13 +20,13 @@ int main()
 		U16_temp=0;
 	while(1)
 	{
-		for(U16_i=999 ; U16_i>0 ; U16_i --)
+		for(U16_i=9999 ; U16_i>0 ; U16_i --)
 			{
-			int i;
-			for(i=0; i<20 ; i++){
-			void_sevSeg_dispaly( U16_i);
-			}_delay_ms(1);
-			}
+				U8_t U8_i = 0;
+				for(U8_i=0 ; U8_i <(2*DELAY) ; U8_i ++)
+				void_sevSeg_dispaly( U16_i);
+				_delay_ms(DELAY);
+		    }
 	}
 return (0);
 }
