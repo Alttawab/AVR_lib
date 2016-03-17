@@ -7,73 +7,26 @@
 
 #include "HAL/LED.h"
 #include "HAL/keyPad.h"
+#include "HAL/SevenSegments.h"
 #include <util\delay.h>
+#include <avr/io.h>
+
 int main()
 {
-	void_led_init_all_led();
-	void_keyPad_init();
-	void_led_all_led_off();
-	U8_t U8_key ;
-	U8_key=0;
+	void_sevSeg_init() ;
+		U16_t U16_i ;
+		U16_t U16_temp;
+		U16_i=0;
+		U16_temp=0;
 	while(1)
 	{
-		void_keyPad_wait_keyRelease();
-		void_keyPad_wait_keyPress();
-		U8_key =U8_keyPad_scanKey();
-
-		switch(U8_key)
-
-
-		{
-		case 1:
-			void_led_all_led_off();
-			void_led_1_on();
-			break ;
-		case 2:
-			void_led_all_led_off();
-			void_led_2_on();
-			break ;
-		case 3:
-			void_led_all_led_off();
-			void_led_1_on();
-			void_led_2_on();
-			break ;
-		case 4 :
-			void_led_all_led_off();
-			void_led_3_on();
-			break ;
-		case 5:
-			void_led_all_led_off();
-			void_led_3_on();
-			void_led_1_on();
-			break ;
-		case 6:
-			void_led_all_led_off();
-			void_led_3_on();
-			void_led_2_on();
-			break ;
-		case 7:
-			void_led_all_led_off();
-			void_led_1_on();
-			void_led_2_on();
-			void_led_3_on();
-			break ;
-		case 8:
-			void_led_all_led_off();
-			void_led_4_on();
-			break ;
-		case 9:
-			void_led_all_led_off();
-			void_led_1_on();
-			void_led_4_on();
-			break ;
-		default :
-			void_led_all_led_off();
-			void_led_4_on();
-			void_led_2_on();
-		}
-
+		for(U16_i=9999 ; U16_i>0 ; U16_i --)
+			{
+			int i;
+			for(i=0; i<20 ; i++){
+			void_sevSeg_dispaly( U16_i);
+			}_delay_ms(1);
+			}
 	}
-
 return (0);
 }
