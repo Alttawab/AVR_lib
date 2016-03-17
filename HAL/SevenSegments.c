@@ -15,8 +15,6 @@
  *
  *
  */
-
-
 #include "SevenSegments.h"
 #include "../MCAL/D_IO.h"
 #include <util\delay.h>
@@ -35,36 +33,39 @@ void void_sevSeg_init()
 
 
 
-void void_sevSeg_dispaly(U16_t U16_numeric_value)
+
+void void_sevSeg_dispaly( U16_t U16_numeric_value)
 {
+	U16_numeric_value = U16_sevSeg_dispaly_digit(U16_numeric_value , SEVSEG_EN4);
+	U16_numeric_value = U16_sevSeg_dispaly_digit(U16_numeric_value , SEVSEG_EN3);
+	U16_numeric_value = U16_sevSeg_dispaly_digit(U16_numeric_value , SEVSEG_EN2);
+	U16_numeric_value = U16_sevSeg_dispaly_digit(U16_numeric_value , SEVSEG_EN1);
+}
 
 
+
+U16_t U16_sevSeg_dispaly_digit(U16_t U16_numeric_value,  U8_t U8_digit )
+{
 	S8_DIO_set_port_mask(SEVSEG_ENABLE_PORT , 0x3C);
-	S8_DIO_clear_pin( SEVSEG_ENABLE_PORT , SEVSEG_EN4);
+	S8_DIO_clear_pin( SEVSEG_ENABLE_PORT , U8_digit);
 	S8_DIO_clear_port_mask(SEVSEG_DATA_PORT , 0xF0);
-	S8_DIO_set_port_mask(SEVSEG_DATA_PORT , U16_numeric_value /1000 );
-	U16_numeric_value %=1000 ;
-	_delay_ms(DELAYS);
-
-	S8_DIO_set_port_mask(SEVSEG_ENABLE_PORT , 0x3C);
-	S8_DIO_clear_pin( SEVSEG_ENABLE_PORT , SEVSEG_EN3);
-	S8_DIO_clear_port_mask(SEVSEG_DATA_PORT , 0xF0);
-	S8_DIO_set_port_mask(SEVSEG_DATA_PORT , U16_numeric_value /100 );
-	U16_numeric_value %=100 ;
-	_delay_ms(DELAYS);
-
-	S8_DIO_set_port_mask(SEVSEG_ENABLE_PORT , 0x3C);
-	S8_DIO_clear_pin( SEVSEG_ENABLE_PORT , SEVSEG_EN2);
-	S8_DIO_clear_port_mask(SEVSEG_DATA_PORT , 0xF0);
-	S8_DIO_set_port_mask(SEVSEG_DATA_PORT , U16_numeric_value /10 );
-	U16_numeric_value %=10 ;
-	_delay_ms(DELAYS);
-
-	S8_DIO_set_port_mask(SEVSEG_ENABLE_PORT , 0x3C);
-	S8_DIO_clear_pin( SEVSEG_ENABLE_PORT , SEVSEG_EN1);
-	S8_DIO_clear_port_mask(SEVSEG_DATA_PORT , 0xF0);
-	S8_DIO_set_port_mask(SEVSEG_DATA_PORT , U16_numeric_value );
-	_delay_ms(DELAYS);
+	switch (U8_digit)
+	{
+	case SEVSEG_EN2:
+		S8_DIO_set_port_mask(SEVSEG_DATA_PORT , U16_numeric_value /10 );
+		U16_numeric_value %=10 ;
+		break ;
+	case SEVSEG_EN3:
+		S8_DIO_set_port_mask(SEVSEG_DATA_PORT , U16_numeric_value /100 );
+		U16_numeric_value %=100 ;
+		break ;
+	case SEVSEG_EN4:
+		S8_DIO_set_port_mask(SEVSEG_DATA_PORT , U16_numeric_value /1000 );
+		U16_numeric_value %=1000 ;
+		break ;
+	default :
+		S8_DIO_set_port_mask(SEVSEG_DATA_PORT , U16_numeric_value  );
 	}
-
-
+	_delay_ms(DELAYS);
+	return (U16_numeric_value);
+}
