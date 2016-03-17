@@ -20,7 +20,7 @@ int main()
 		U16_temp=0;
 	while(1)
 	{
-		for(U16_i=9999 ; U16_i>0 ; U16_i --)
+		for(U16_i=999 ; U16_i>0 ; U16_i --)
 			{
 			int i;
 			for(i=0; i<20 ; i++){
