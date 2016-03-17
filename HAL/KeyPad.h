@@ -8,7 +8,6 @@
 #ifndef HAL_KEYPAD_H_
 #define HAL_KEYPAD_H_
 #include "..\ServiceLayer\stdTypes.h"
-void delay(U8_t);
 void void_keyPad_init();
 void void_keyPad_wait_keyRelease();
 void void_keyPad_wait_keyPress();

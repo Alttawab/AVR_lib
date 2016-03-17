@@ -15,8 +15,9 @@
 #define COLUMN1 7
 #define COLUMN2 6
 #define COLUMN3 5
+static void delay(U8_t);
 
-void delay(U8_t U8_time_in_ms)
+static void delay(U8_t U8_time_in_ms)
 {
 	_delay_ms(U8_time_in_ms);
 }
