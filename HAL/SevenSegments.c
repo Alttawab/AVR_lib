@@ -36,11 +36,14 @@ void void_sevSeg_init()
 
 void void_sevSeg_dispaly( U16_t U16_numeric_value)
 {
+	if( U16_numeric_value > MAXIMUM_VALUE)
+		U16_numeric_value = MAXIMUM_VALUE ;
 	U16_numeric_value = U16_sevSeg_dispaly_digit(U16_numeric_value , SEVSEG_EN4);
 	U16_numeric_value = U16_sevSeg_dispaly_digit(U16_numeric_value , SEVSEG_EN3);
 	U16_numeric_value = U16_sevSeg_dispaly_digit(U16_numeric_value , SEVSEG_EN2);
 	U16_numeric_value = U16_sevSeg_dispaly_digit(U16_numeric_value , SEVSEG_EN1);
 }
+
 
 
 

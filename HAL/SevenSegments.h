@@ -23,7 +23,8 @@
 #define SEVSEG_EN4 2
 #define SEVSEG_FLOAT_ENABLE 5
 #define DELAYS 2
-
+#define MAXIMUM_VALUE 9999
+#define MINIMUM_VLAUE 0
 
 void void_sevSeg_init();
 void void_sevSeg_dispaly(U16_t U16_numeric_value);
