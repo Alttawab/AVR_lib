@@ -28,6 +28,5 @@
 
 void void_sevSeg_init();
 void void_sevSeg_dispaly(U16_t U16_numeric_value);
-U16_t U16_sevSeg_dispaly_digit(U16_t U16_numeric_value,  U8_t U8_digit ) ;
 
 #endif /* HAL_SEVENSEGMENTS_H_ */

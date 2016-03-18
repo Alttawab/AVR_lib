@@ -19,9 +19,7 @@
 #include "../MCAL/D_IO.h"
 #include <util\delay.h>
 
-
-
-
+static U16_t U16_sevSeg_dispaly_digit(U16_t U16_numeric_value,  U8_t U8_digit ) ;
 
 void void_sevSeg_init()
 {
@@ -30,8 +28,6 @@ void void_sevSeg_init()
 	S8_DIO_init_pin(SEVSEG_FLOAT_PORT  , SEVSEG_FLOAT_ENABLE ,HIGH);
 	S8_DIO_set_port_mask(SEVSEG_ENABLE_PORT , 0x3C);
 }
-
-
 
 
 void void_sevSeg_dispaly( U16_t U16_numeric_value)
@@ -45,9 +41,7 @@ void void_sevSeg_dispaly( U16_t U16_numeric_value)
 }
 
 
-
-
-U16_t U16_sevSeg_dispaly_digit(U16_t U16_numeric_value,  U8_t U8_digit )
+static U16_t U16_sevSeg_dispaly_digit(U16_t U16_numeric_value,  U8_t U8_digit )
 {
 	S8_DIO_set_port_mask(SEVSEG_ENABLE_PORT , 0x3C);
 	S8_DIO_clear_pin( SEVSEG_ENABLE_PORT , U8_digit);
