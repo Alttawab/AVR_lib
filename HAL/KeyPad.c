@@ -9,12 +9,12 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #define KEYPAD_PORT 'A'
-#define ROW1 4
-#define ROW2 3
-#define ROW3 2
-#define COLUMN1 7
-#define COLUMN2 6
-#define COLUMN3 5
+#define ROW1 4			//OUTPUT
+#define ROW2 3			//OUTPUT
+#define ROW3 2			//OUTPUT
+#define COLUMN1 7		//INPUT
+#define COLUMN2 6		//INTPUT
+#define COLUMN3 5		//INTPUT
 static void delay(U8_t);
 
 static void delay(U8_t U8_time_in_ms)
@@ -32,11 +32,12 @@ void void_keyPad_init()
 
 void void_keyPad_wait_keyRelease()
 {
+	S8_DIO_set_port_mask(KEYPAD_PORT , 0xFC) ;
 	S8_DIO_clear_port_mask(KEYPAD_PORT , 0xE3) ;
 	do {
 		do
 		{
-			delay(10);
+			delay(1);
 		}  while( S16_DIO_read_port_mask(KEYPAD_PORT , 0x00E0) !=0x00E0);
 
 	}  while( S16_DIO_read_port_mask(KEYPAD_PORT , 0x00E0) !=0x00E0);
@@ -51,6 +52,26 @@ void void_keyPad_wait_keyPress()
 		} while(S16_DIO_read_port_mask(KEYPAD_PORT , 0x00E0) == 0x00E0 );
 }
 
+
+bool bool_keyPad_wait_keyPress_open(U8_t U8_max)
+{
+	bool bool_key_state;
+	bool_key_state = FALSE ;
+	U8_t U8_i ;
+	for(U8_i = 0 ; U8_i < U8_max ; U8_i ++)
+	{
+		S8_DIO_set_port_mask(KEYPAD_PORT , 0xFC) ;
+		S8_DIO_clear_port_mask(KEYPAD_PORT , 0xE3);
+		if(S16_DIO_read_port_mask(KEYPAD_PORT , 0x00E0) != 0x00E0 )
+		{
+			bool_key_state = TRUE ;
+			break ;
+		}
+
+	}
+
+	return (bool_key_state);
+}
 
 U8_t U8_keyPad_scanKey()
 {

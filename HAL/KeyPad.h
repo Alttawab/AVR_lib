@@ -10,6 +10,8 @@
 #include "..\ServiceLayer\stdTypes.h"
 void void_keyPad_init();
 void void_keyPad_wait_keyRelease();
-void void_keyPad_wait_keyPress();
+bool bool_keyPad_wait_keyPress();
+bool bool_keyPad_wait_keyPress_open(U8_t U8_max) ;
+
 U8_t U8_keyPad_scanKey();
 #endif /* HAL_KEYPAD_H_ */
