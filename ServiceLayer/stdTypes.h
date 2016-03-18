@@ -1,7 +1,7 @@
 #ifndef ServiceLayer_stdTypes_h_
 #define ServiceLayer_stdTypes_h_
 
-typedef unsigned char BOOLEAN;
+typedef unsigned char bool;
 typedef unsigned char U8_t;
 typedef signed char S8_t;
 typedef unsigned int U16_t;
@@ -23,7 +23,7 @@ typedef double FP64;
 #define QWORD S64_t
 #define UQWORD U64_t
 #define TRUE 1
-#define False 0
+#define FALSE 0
 #define SUCCESS 1
 #define FAILURE 0
 #define SET 1
