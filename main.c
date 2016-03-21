@@ -8,54 +8,28 @@
 #include "HAL/keyPad.h"
 #include "HAL/SevenSegments.h"
 #include <util\delay.h>
-#define DELAY 10
+#include "MCAL\D_IO.h"
+#include "HAL\LCD.h"
 
-U16_t U16_pow(U16_t U16_num , U8_t U8_power);
+#define SET_PIN(PORT , PIN) PORT |= (1<<PIN)
+#define RESET_PIN(PORT , PIN ) PORT &= ~(1<<PIN)
 
-int main() {
-	void_sevSeg_init();
+
+
+int main()
+
+{
 	void_keyPad_init();
-	void_keyPad_wait_keyRelease();
-	U16_t U16_num;
-	U8_t U8_ten_order ;
-	U8_t U8_i ;
-	     U16_num = 0;
-		 U8_ten_order =0 ;
-		 U8_i= 0;
-	while (1)
+	void_lcd_init();
+	S8_t S8_arr_keyScan [2] = {0 , '\0'}; ;
+	while(1)
 	{
-
-
-		if(bool_keyPad_wait_keyPress_open(50))
-		{
-			U16_num =(U16_num * U16_pow(10,U8_ten_order)) + U8_keyPad_scanKey() ;
-			U8_ten_order ++ ;
-		}
-			for (U8_i = 0; U8_i < (3* DELAY); U8_i++)
-				{
-				void_sevSeg_dispaly(U16_num);
-
-				}
-			_delay_ms(DELAY);
+	void_keyPad_wait_keyRelease();
+	void_keyPad_wait_keyPress();
+	S8_arr_keyScan[0] =(S8_t)U8_keyPad_scanKey()+48;
+	void_lcd_print(S8_arr_keyScan);
 
 	}
 	return (0);
 }
-
-U16_t U16_pow(U16_t U16_num , U8_t U8_power)
-{
-	U8_t U8_i ;
-	for(U8_i=1 ;U8_i < U8_power ; U8_i ++ )
-	{
-		if(U8_power == 0)
-			U16_num =1 ;
-			break ;
-		if(U8_power == 1)
-			U16_num *=1 ;
-			break ;
-		U16_num *= U16_num ;
-	}
-	return (U16_num);
-}
-
 
