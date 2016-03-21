@@ -5,16 +5,8 @@
  *      Author: Alttawab
  */
 #include "..\HAL\KeyPad.h"
-#include "..\MCAL\D_IO.h"
-#include <util/delay.h>
-#include <avr/io.h>
-#define KEYPAD_PORT 'A'
-#define ROW1 4			//OUTPUT
-#define ROW2 3			//OUTPUT
-#define ROW3 2			//OUTPUT
-#define COLUMN1 7		//INPUT
-#define COLUMN2 6		//INTPUT
-#define COLUMN3 5		//INTPUT
+
+
 static void delay(U8_t);
 
 static void delay(U8_t U8_time_in_ms)
@@ -28,6 +20,7 @@ void void_keyPad_init()
 	S8_DIO_init_input_port_mask(KEYPAD_PORT , 0x1F);
 	S8_DIO_set_port_mask(KEYPAD_PORT , 0xFC) ;
 }
+
 
 
 void void_keyPad_wait_keyRelease()
