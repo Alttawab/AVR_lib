@@ -186,3 +186,6 @@ void adc_select_refrence(U8_t U8_Aref_or_aVcc_or_Internal_2v56_ref)
 			CLEAR_PIN(ADMUX , ADREF0);		/*				  REFERANCE	*/
 	}
 }
+
+
+/*todo make differntial input mode */

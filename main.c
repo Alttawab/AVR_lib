@@ -13,8 +13,6 @@
 #include "serviceLayer\stdTypes.h"
 #include <stdlib.h>
 #include "MCAL\ADC.h"
-
-
 int main()
 {
 void_lcd_init();
@@ -45,6 +43,5 @@ while (1)
 		void_lcd_print((S8_t * )char_temp);
 		void_lcd_data(0xDF);	/* ° symbol*/
 		_delay_ms(500);
-
 	}
 }
