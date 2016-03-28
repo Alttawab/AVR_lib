@@ -11,28 +11,37 @@
 #include "MCAL\D_IO.h"
 #include "HAL\LCD.h"
 #include "serviceLayer\stdTypes.h"
-#define SET_PIN(PORT , PIN) PORT |= (1<<PIN)
-#define RESET_PIN(PORT , PIN ) PORT &= ~(1<<PIN)
-
-
-
+#include <stdlib.h>
+#include "MCAL\ADC.h"
 int main()
-
 {
-	void_lcd_init();
-	S8_t * S8_arr_keyScan =(S8_t *)"\0";
-	void_keyPad_init();
-	while(1)
-	{
-	 void_lcd_int_to_asci( -57855 , S8_arr_keyScan , 10);
+void_lcd_init();
+void_adc_init('A' , 1);
+U16_t U16_value ;
+U16_value=0;
+char  char_temp[7] ={'\0'};
+FP64 FP64_num;
+FP64_num =0.0;
+while (1)
+{
+		U16_value=U16_adc_read();
 
-	//void_keyPad_wait_keyRelease();
-//	void_keyPad_wait_keyPress();
-//	S8_arr_keyScan[0] =(S8_t)U8_keyPad_scanKey()+48;
+		itoa(U16_value ,char_temp ,10);
+		void_lcd_goto_xy(1,1);
+		void_lcd_print((S8_t * )"ADC code:");
+		void_lcd_goto_xy(10,1);
+		void_lcd_print((S8_t * )char_temp);
+		void_lcd_print((S8_t * )"   ");
 
-	void_lcd_print(S8_arr_keyScan);
-
+		FP64_num=4.882 /1024 ;
+		FP64_num=FP64_num * U16_value ;
+		FP64_num*=100;
+		dtostrf(FP64_num ,4,1,char_temp);
+		void_lcd_goto_xy(1,2);
+		void_lcd_print((S8_t * )"Temp:");
+		void_lcd_goto_xy(6,2);
+		void_lcd_print((S8_t * )char_temp);
+		void_lcd_data(0xDF);	/* ° symbol*/
+		_delay_ms(500);
 	}
-
-
 }

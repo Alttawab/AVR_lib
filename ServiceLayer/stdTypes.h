@@ -1,6 +1,9 @@
 #ifndef ServiceLayer_stdTypes_h_
 #define ServiceLayer_stdTypes_h_
 
+
+#define SET_PIN(REGISTER , PIN) REGISTER |= (1<<PIN)
+#define CLEAR_PIN(REGISTER , PIN ) REGISTER &= ~(1<<PIN)
 typedef unsigned char bool;
 typedef unsigned char U8_t;
 typedef signed char S8_t;
