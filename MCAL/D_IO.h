@@ -1,6 +1,7 @@
 #ifndef MCAL_D_IO_H_
 #define MCAL_D_IO_H_
 #include "..\ServiceLayer\stdTypes.h"
+#include <avr/io.h>
 S8_t S8_DIO_init_port(const U8_t PortName , const U8_t value) ;
 S8_t S8_DIO_init_pin(const U8_t PortName,const U8_t  PinNumber, const U8_t dir) ;
 volatile S16_t S16_DIO_read_port(const U8_t PortName) ;
