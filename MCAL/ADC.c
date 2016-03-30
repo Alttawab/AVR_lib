@@ -115,7 +115,7 @@ void void_adc_enable(U8_t U8_state)
 }
 
 
-
+/*todo:Enhance the functionality of the Differential input mode*/
 
 /*void_adc_prescaler_setup function provide autosetup and manual adjacent the prescaler
  * #define FREQUANCY_PRE_SCALER - prescaler -  prescaler should be selected between (2,4,8,16,32,64,128)
