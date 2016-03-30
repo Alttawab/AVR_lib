@@ -8,9 +8,8 @@
 #include "adc.h"
 
 /*ADC SETUP*/
-//#define FREQUANCY_PRE_SCALER 64  /*Uncomment if user need specific prescaler */
+//#define FREQUANCY_PRE_SCALER 2  /*Recommended to use this macros if differntial_mode activated  Uncomment if user need specific prescaler */
 #define ADC_REFERNCE_VOLTAGE 'A'
-#define SINGLE_ENDED_MODE
 
 /*ADCSRA*/
 #define ADEN 	7
@@ -33,14 +32,13 @@
 #define ADMUX0	0
 
 
-void void_adc_init(U8_t U8_port ,U8_t U8_pin )
+void void_adc_init_single_ended_input(U8_t U8_port ,U8_t U8_pin )
 {
 	S8_DIO_init_pin(U8_port ,U8_pin,INPUT); 		/*make pin input */
 	void_adc_enable(SET);							/*Enable the ADC*/
 	void void_adc_prescaler_setup();				/*select the prescaler*/
 	adc_select_refrence(ADC_REFERNCE_VOLTAGE);						/*select reference to be Avref */
-
-#ifdef SINGLE_ENDED_MODE
+	CLEAR_PIN(ADMUX , ADLAR);
 	CLEAR_PIN(ADMUX , ADMUX0);						/*						  A0*/
 	CLEAR_PIN(ADMUX , ADMUX2);						/*			analoge			*/
 	CLEAR_PIN(ADMUX , ADMUX1);						/*					channel	*/
@@ -48,12 +46,11 @@ void void_adc_init(U8_t U8_port ,U8_t U8_pin )
 	ADMUX|=U8_pin;
 	CLEAR_PIN(ADMUX , ADMUX3);						/*		the					*/
 	CLEAR_PIN(ADMUX , ADMUX4);						/*Select					*/
-#endif
 }
 
 
 /*read pin*/
-U16_t U16_adc_read()
+U16_t U16_adc_read_single_ended_input()
 {
 	U8_t U8_analoge_data_low ;
 	U8_t U8_analoge_data_high;
@@ -61,13 +58,45 @@ U16_t U16_adc_read()
 	U8_analoge_data_low =0 ;
 	U8_analoge_data_high=0;
 	U16_value =0;
-	SET_PIN(ADCSRA , ADSC);
-	while(!(1<<ADIF)&(ADCSRA));
-	ADCSRA |= (1<<ADIF) ;
+	SET_PIN(ADCSRA , ADSC);					/*start conversion*/
+	while(!(1<<ADIF)&(ADCSRA));				/*wait until interrupt flag to be 1*/
+	SET_PIN(ADCSRA , ADIF);					/* clear interrupt flag by sit the bit*/
 	U8_analoge_data_low = ADCL ;
 	U8_analoge_data_high = ADCH ;
 	U16_value = (((U16_t )U8_analoge_data_high)<<8) +U8_analoge_data_low ;
 	return (U16_value) ;
+}
+
+
+/*read pin in differtial mode */
+/*range from 0x200 (-512) to 0x1FF(511)
+ * */
+S16_t S16_adc_read_differential_input()
+{
+	U8_t U8_analog_data_low ;
+	U8_t U8_analog_data_high;
+	S16_t S16_value ;
+
+	U8_analog_data_low =0 ;
+	U8_analog_data_high=0 ;
+	S16_value =0;
+	SET_PIN(ADCSRA , ADSC);				/*start conversion*/
+	while(!(1<<ADIF)&(ADCSRA));
+	SET_PIN(ADCSRA , ADIF);					/* clear interrupt flag by sit the bit*/
+	U8_analog_data_low = ADCL ;
+	U8_analog_data_high = ADCH ;
+	if(U8_analog_data_high |=(1<<1))
+	{
+		U8_analog_data_high |=(1<<2);
+		U8_analog_data_high |=(1<<3);
+		U8_analog_data_high |=(1<<4);
+		U8_analog_data_high |=(1<<5);
+		U8_analog_data_high |=(1<<6);
+		U8_analog_data_high |=(1<<7);
+	}
+
+	S16_value = (((U16_t )U8_analog_data_high)<<8) +U8_analog_data_low ;
+	return (S16_value) ;
 }
 
 
@@ -155,6 +184,7 @@ void void_adc_prescaler_setup()
 
 
 
+
 /*Select reference provid choise from 3 refernce
  * A=AREF
  * V=AVCC (make sure that there isn't constant voltage in AREF pin)
@@ -188,4 +218,171 @@ void adc_select_refrence(U8_t U8_Aref_or_aVcc_or_Internal_2v56_ref)
 }
 
 
-/*todo make differntial input mode */
+/*differential input mode  select one from this choices
+ *	1x 		gain (positive , negative)(0,1)(1,1)(2,1)(3,1)(4,1)(5,1)(6,1)(7,1)(0,2)(1,2)(2,2)(3,2)(4,2)(5,2)
+ *	10x		gain (POSITIVE , negative)(0,0)(1,0)(2,2)(2,3)
+ *	200x	gain (POSITIVE , negative)(0,0)(1,0)(2,2)(2,3)*/
+
+void void_adc_init_differential_input (U8_t U8_port , U8_t U8_positive_differential, U8_t U8_negative_differential , U8_t U8_gain)
+{
+	S8_DIO_init_pin(U8_port ,U8_positive_differential,INPUT); 		/*make pin input */
+	S8_DIO_init_pin(U8_port ,U8_negative_differential,INPUT); 		/*make pin input */
+	void_adc_enable(SET);							/*Enable the ADC*/
+	void void_adc_prescaler_setup();				/*select the prescaler*/
+	CLEAR_PIN(ADMUX , ADLAR);						/*select right LSP to store data*/
+	adc_select_refrence(ADC_REFERNCE_VOLTAGE);						/*select reference to be Avref */
+
+	switch (U8_gain)
+	{
+//case 10x gain
+			case 10:
+				CLEAR_PIN(ADMUX , ADMUX4);
+				SET_PIN(ADMUX , ADMUX3);
+				CLEAR_PIN(ADMUX , ADMUX1);
+				switch(U8_negative_differential)
+				{
+					case 2:
+						switch(U8_positive_differential)
+						{
+							case 3:
+								SET_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							default:
+								SET_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX0);
+						}
+						break ;
+
+					default:
+						switch(U8_positive_differential)
+						{
+							case 1:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							default:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX0);
+						}
+				}
+				break;
+//case 200x gain
+			case 200:
+				CLEAR_PIN(ADMUX , ADMUX4);
+				SET_PIN(ADMUX , ADMUX3);
+				SET_PIN(ADMUX , ADMUX1);
+				switch(U8_negative_differential)
+				{
+					case 2:
+						switch(U8_positive_differential)
+						{
+							case 3:
+								SET_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							default:
+								SET_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX0);
+						}
+						break ;
+					default:
+						switch(U8_positive_differential)
+						{
+							case 1:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							default:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX0);
+						}
+				}
+				break;
+//default case is 1x gain
+			default:
+				SET_PIN(ADMUX , ADMUX4);  				/*to select 1x gain you have to set ADMUX4 */
+				switch(U8_negative_differential)
+				{
+					case 2:
+						SET_PIN(ADMUX , ADMUX3);		/*to select PIN 2 negative bin SET ADMUX3*/
+						switch(U8_positive_differential)
+						{
+							case 0:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX1);
+								CLEAR_PIN(ADMUX , ADMUX0);
+								break;
+							case 1:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX1);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							case 3:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX1);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							case 4:
+								SET_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX1);
+								CLEAR_PIN(ADMUX , ADMUX0);
+								break;
+							case 5:
+								SET_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX1);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							default:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX1);
+								CLEAR_PIN(ADMUX , ADMUX0);
+						}
+						break ;
+					default:
+						CLEAR_PIN(ADMUX , ADMUX3);
+						switch(U8_positive_differential)
+						{
+							case 0:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX1);
+								CLEAR_PIN(ADMUX , ADMUX0);
+								break;
+							case 2:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX1);
+								CLEAR_PIN(ADMUX , ADMUX0);
+								break;
+							case 3:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX1);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							case 4:
+								SET_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX1);
+								CLEAR_PIN(ADMUX , ADMUX0);
+								break;
+							case 5:
+								SET_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX1);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							case 6:
+								SET_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX1);
+								CLEAR_PIN(ADMUX , ADMUX0);
+								break;
+							case 7:
+								SET_PIN(ADMUX , ADMUX2);
+								SET_PIN(ADMUX , ADMUX1);
+								SET_PIN(ADMUX , ADMUX0);
+								break;
+							default:
+								CLEAR_PIN(ADMUX , ADMUX2);
+								CLEAR_PIN(ADMUX , ADMUX1);
+								SET_PIN(ADMUX , ADMUX0);
+						}
+			}
+	}
+}

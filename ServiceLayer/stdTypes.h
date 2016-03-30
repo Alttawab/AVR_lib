@@ -1,7 +1,12 @@
 #ifndef ServiceLayer_stdTypes_h_
 #define ServiceLayer_stdTypes_h_
 
-
+/* sizeof int =	2 	byte
+ * sizeof char=	1 	byte
+ * sizeof float=4 	byte
+ * sizeof double=4 	byte
+ * sizeof short=2 	byte
+ * sizeof long=	4	byte*/
 #define SET_PIN(REGISTER , PIN) REGISTER |= (1<<PIN)
 #define CLEAR_PIN(REGISTER , PIN ) REGISTER &= ~(1<<PIN)
 typedef unsigned char bool;
