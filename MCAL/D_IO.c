@@ -34,7 +34,7 @@ S8_t S8_DIO_init_port(const U8_t PortName, const U8_t value)
 
 S8_t S8_DIO_init_pin(const U8_t PortName, const U8_t PinNumber, const U8_t dir)
 {
-    U8_t state;
+    S8_t state;
     state = 1;
     if (PinNumber > (REG_PINS - 1))
         state = -1;
